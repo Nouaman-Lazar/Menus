@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Our Menu</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        * {
+           outline:none;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+        }
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px;
+            background-color: #ff5500;
+            color: white;
+        }
+        .navbar .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .navbar .cart {
+            position: relative;
+            cursor: pointer;
+        }
+        .navbar .cart i {
+            font-size: 1.5em;
+        }
+        .navbar .cart-count {
+            position: absolute;
+            top: -10px;
+            border: #000000 2px solid;
+            right: -10px;
+            background-color: rgb(255, 255, 255);
+            color: rgb(255, 0, 0);
+            border-radius: 50%;
+            padding: 3px 6px;
+            font-size: 0.9em;
+        }
+
+        .menu-container {
+            text-align: center;
+            padding: 10px 10px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .category-filter {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .category-filter button {
+            border: #ff5500 2px solid;
+            width: 47%;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .category-filter .active {
+            background-color: #ff5500;
+            color: white;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .menu-item-content {
+            flex-grow: 1;
+            padding-left: 20px;
+            text-align: left;
+        }
+        .menu-item-content h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+        .menu-item-content p {
+            color: #888;
+            margin: 5px 0;
+        }
+        .menu-item-content .price {
+            color: #ff5500;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .menu-item-actions {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .menu-item-actions button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .add-to-cart {
+            background-color: #ff5500;
+            color: white;
+        }
+        .buy-now {
+            background-color: white;
+            color: #ff5500;
+            border: 2px solid #ff5500;
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            right: -340px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+            transition: right 0.3s;
+            z-index: 1000;
+            padding: 0px 20px;
+        }
+        .cart-sidebar.active {
+            right: 0;
+        }
+        .cart-sidebar h3, h4{
+            margin-top: 0;
+            color: #333;
+        }
+        .cart-sidebar .close-btn {
+            background-color: transparent;
+            border: none;
+            color: #ff5500;
+            font-size: 2em;
+            float: right;
+            position: relative;
+            left: -130px;
+            cursor: pointer;
+        }
+        .cart-sidebar .cart-item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgb(155, 155, 155);
+            padding-bottom: 10px;
+            align-items: center;
+        }
+
+        .cart-sidebar .cart-item .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-sidebar .cart-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+        .cart-sidebar .quantity-control {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5px;
+        }
+        .cart-sidebar .quantity-control button {
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            width: 30px;
+            cursor: pointer;
+        }
+        .cart-sidebar .quantity-control input {
+            width: 130px;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .cart-sidebar .total {
+            font-weight: bold;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .cart-sidebar button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Checkout Modal */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+        .checkout-modal.active {
+            display: flex;
+        }
+        .checkout-modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+        .checkout-modal-content h2 {
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+        .checkout-modal-content label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .checkout-modal-content input, .checkout-modal-content textarea, .checkout-modal-content select {
+            width: calc(100%);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .checkout-modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff5500;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .checkout-modal-content button.cancel {
+            background-color: #ccc;
+            color: #333;
+        }
+        .checkout-modal-content .delivery-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .checkout-modal-content .delivery-options .icon-option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            width: 49%;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+        .checkout-modal-content .delivery-options .icon-option i {
+            margin-right: 5px;
+        }
+        .checkout-modal-content .icon-option.active {
+            background-color: #ff5500;
+            color: white;
+        }
+        .checkout-modal-content .address-container,
+        .checkout-modal-content .dinein-time-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">LOGO</div>
+        <div class="cart" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="cart-count" id="cart-count">0</div>
+        </div>
+    </div>
+
+    <div class="menu-container">
+        <h1>Browse our menu</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
+
+        <!-- Category Filter -->
+        <div class="category-filter">
+            <button class="active" onclick="filterMenu('all')">All</button>
+            <button onclick="filterMenu('maindishes')">Main Dishes</button>
+            <button onclick="filterMenu('drinks')">Drinks</button>
+            <button onclick="filterMenu('desserts')">Desserts</button>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="menu-items">
+            <div class="menu-item" data-category="maindishes">
+                <img src="https://media.istockphoto.com/id/520410807/fr/photo/cheeseburger.jpg?s=612x612&w=0&k=20&c=-NURhfLFsfAl6CQRBnfFR__6KE38UBjd4VPWmt7Vb2k=" alt="Classic Burger">
+                <div class="menu-item-content">
+                    <h2>Classic Burger</h2>
+                    <p>Juicy beef patty with lettuce, tomato, and cheese.</p>
+                    <p class="price">40 DH</p>
+                    <div class="menu-item-actions">
+                        <button style="width: 100%;" class="add-to-cart" onclick="addToCart('Classic Burger', 40)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item" data-category="drinks">
+                <img src="https://saltandbaker.com/wp-content/uploads/2020/12/oreo-milkshake-recipe.jpg" alt="Classic Burger">
+                <div class="menu-item-content">
+                    <h2>Orio Milkshak</h2>
+                    <p>Frech drink For this Warm Summer</p>
+                    <p class="price">30 DH</p>
+                    <div class="menu-item-actions">
+                        <button style="width: 100%;" class="add-to-cart" onclick="addToCart('Orio Milkshak', 30)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item" data-category="desserts">
+                <img src="https://www.keep-calm-and-eat-ice-cream.com/wp-content/uploads/2022/08/Ice-cream-sundae-hero-11.jpg" alt="Classic Burger">
+                <div class="menu-item-content">
+                    <h2>Ice Cream Sundae</h2>
+                    <p>Frech drink For this Warm Summer</p>
+                    <p class="price">30 DH</p>
+                    <div class="menu-item-actions">
+                        <button style="width: 100%;" class="add-to-cart" onclick="addToCart('Ice Cream Sundae', 30)">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- More menu items here -->
+
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <button class="close-btn" onclick="toggleCart()">×</button>
+        <h3 style="color: #ff5500;">Cart</h3>
+        <div id="cart-items">
+            <!-- Cart items will be inserted here dynamically -->
+        </div>
+        <div class="total" direction="ltr" id="cart-total" >Total: 0.00 DH</div>
+        <button onclick="openCheckout()">Checkout</button>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-modal-content">
+            <h2>Checkout</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <!-- Delivery or Dine-In Options -->
+            <div class="delivery-options">
+                <div class="icon-option " data-service-type="delivery" onclick="selectServiceType('delivery')">
+                    <i class="fas fa-truck"></i> Delivery
+                </div>
+                <div class="icon-option" data-service-type="dine-in" onclick="selectServiceType('dine-in')">
+                    <i class="fas fa-utensils"></i> Dine-In
+                </div>
+            </div>
+
+            <!-- Address Input -->
+            <div class="address-container">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="3"></textarea>
+            </div>
+
+            <!-- Dine-In Time Input -->
+            <div class="dinein-time-container">
+                <label for="dinein-time">Dine-In Time:</label>
+                <input type="time" id="dinein-time" name="dinein-time">
+            </div>
+
+            <label for="notes">Special Notes:</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+            <button onclick="submitOrder()">Order Via whatsapp</button>
+            <button class="cancel" onclick="closeCheckout()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let cartCount = 0;
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const addressContainer = document.querySelector('.address-container');
+        const dineinTimeContainer = document.querySelector('.dinein-time-container');
+
+        function toggleCart() {
+            cartSidebar.classList.toggle('active');
+        }
+
+        function addToCart(name, price) {
+            let item = cart.find(i => i.name === name);
+            if (item) {
+                item.quantity++;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            cartCount++;
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                cartItemsContainer.innerHTML += `
+                    <div class="cart-item">
+                        <div class="info";">
+                            <h3>${item.name}</h3>
+                            <h4> ${(item.price * item.quantity).toFixed(2)} DH</h4        >
+                            <button onclick="removeFromCart(${index})" style="background-color:transparent; width:20px; margin-top:-20px; font-size:20px;"><i class="fas fa-trash-alt" style="color: red;"></i></button>
+                        </div>
+                        <div class="quantity-control">
+                            <button onclick="changeQuantity(${index}, -1)">-</button>
+                            <input type="text" value="${item.quantity}" readonly>
+                            <button onclick="changeQuantity(${index}, 1)">+</button>
+                        </div>                
+                    </div>
+                `;
+            });
+            cartTotal.textContent = `Total: |${total.toFixed(2)} DH`;
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        function changeQuantity(index, delta) {
+            if (cart[index].quantity + delta > 0) {
+                cart[index].quantity += delta;
+                cartCount += delta;
+                updateCartDisplay();
+            }
+        }
+
+        function removeFromCart(index) {
+            cartCount -= cart[index].quantity;
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        function openCheckout() {
+            checkoutModal.classList.add('active');
+        }
+
+        function closeCheckout() {
+            checkoutModal.classList.remove('active');
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const dineinTime = document.getElementById('dinein-time').value;
+            const notes = document.getElementById('notes').value;
+            const serviceType = document.querySelector('.icon-option.active').getAttribute('data-service-type');
+
+            let orderDetails = `Order Summary:\n\n`;
+            cart.forEach(item => {
+                orderDetails += `${item.name} x${item.quantity} -${(item.price * item.quantity).toFixed(2)}DH\n`;
+            });
+            orderDetails += `\nTotal: ${cartTotal.textContent.split('|')[1]}\n\n`;
+            orderDetails += `Name: ${name}\nPhone: ${phone}\nAddress: ${address}\nService Type: ${serviceType}\nDine-In Time: ${serviceType === 'dine-in' ? dineinTime : 'N/A'}\nNotes: ${notes}`;
+
+            const whatsappLink = `https://api.whatsapp.com/send?phone=+212 615-542845&text=${encodeURIComponent(orderDetails)}`;
+            window.open(whatsappLink, '_blank');
+
+            // Clear cart after order submission
+            cart = [];
+            cartCount = 0;
+            updateCartDisplay();
+            closeCheckout();
+        }
+
+        function filterMenu(category) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.style.display = (category === 'all' || item.dataset.category === category) ? 'flex' : 'none';
+            });
+            document.querySelectorAll('.category-filter button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.querySelector(`button[onclick="filterMenu('${category}')"]`).classList.add('active');
+        }
+
+        function buyNow(name, price) {
+            addToCart(name, price);
+            openCheckout();
+        }
+
+        function selectServiceType(type) {
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`.icon-option[data-service-type="${type}"]`).classList.add('active');
+
+            if (type === 'delivery') {
+                addressContainer.style.display = 'block';
+                dineinTimeContainer.style.display = 'none';
+            } else {
+                addressContainer.style.display = 'none';
+                dineinTimeContainer.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
