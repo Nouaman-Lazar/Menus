@@ -506,7 +506,7 @@
 
             let orderDetails = `Order Summary:\n\n`;
             cart.forEach(item => {
-                orderDetails += `${item.name} x${item.quantity} -${(item.price * item.quantity).toFixed(2)}DH\n`;
+                orderDetails += `${item.name} x${item.quantity} ${(item.price * item.quantity).toFixed(2)}DH\n`;
             });
             orderDetails += `\nTotal: ${cartTotal.textContent.split('|')[1]}\n\n`;
             orderDetails += `Name: ${name}\nPhone: ${phone}\nAddress: ${address}\nService Type: ${serviceType}\nDine-In Time: ${serviceType === 'dine-in' ? dineinTime : 'N/A'}\nNotes: ${notes}`;
