@@ -7,6 +7,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 
     <style>
         * {
@@ -409,7 +410,8 @@
             <!-- Address Input -->
             <div class="address-container">
                 <label for="address">Address:</label>
-                <textarea id="address" name="address" rows="3"></textarea>
+                <input type="text" id="adresse" placeholder="Address Link">
+                <button style="width:100%" onclick="getLocation()">Get Location via GPS</button>                
             </div>
 
             <!-- Dine-In Time Input -->
@@ -494,6 +496,43 @@
 
         function closeCheckout() {
             checkoutModal.classList.remove('active');
+        }
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this device.");
+            }
+        }
+
+        // Function to handle the coordinates and generate a Google Maps link
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            
+            // Generate Google Maps link based on coordinates
+            var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            
+            // Update the input field with the link
+            document.getElementById("adresse").value = googleMapsLink;
+        }
+
+        // Function to handle errors
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Permission to access location was denied.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
         }
 
         function submitOrder() {
