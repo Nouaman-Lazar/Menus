@@ -429,30 +429,16 @@
     </div>
     <button id="install-button" style="display:none;">تثبيت الموقع</button>
     <script>
-        let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // منع المتصفح من إظهار الرسالة الافتراضية
-  e.preventDefault();
-  deferredPrompt = e;
-  // يمكنك الآن إظهار زر أو رسالة للمستخدم لتثبيت الموقع
-  const installButton = document.getElementById('install-button');
-  installButton.style.display = 'block';
-
-  installButton.addEventListener('click', () => {
-    // إظهار مربع التثبيت
-    deferredPrompt.prompt();
-    // التعامل مع النتيجة
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      } else {
-        console.log('User dismissed the install prompt');
-      }
-      deferredPrompt = null;
-    });
-  });
-});
+        if ('serviceWorker' in navigator) {
+           window.addEventListener('load', () => {
+           navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => {
+          console.log('Service Worker registered', reg);
+          }).catch(err => {
+          console.error('Service Worker registration failed', err);
+           });
+          });
+        }
 
         let cart = [];
         let cartCount = 0;
