@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Our Menu</title>
 
@@ -426,8 +427,33 @@
             <button class="cancel" onclick="closeCheckout()">Cancel</button>
         </div>
     </div>
-
+    <button id="install-button" style="display:none;">تثبيت الموقع</button>
     <script>
+        let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // منع المتصفح من إظهار الرسالة الافتراضية
+  e.preventDefault();
+  deferredPrompt = e;
+  // يمكنك الآن إظهار زر أو رسالة للمستخدم لتثبيت الموقع
+  const installButton = document.getElementById('install-button');
+  installButton.style.display = 'block';
+
+  installButton.addEventListener('click', () => {
+    // إظهار مربع التثبيت
+    deferredPrompt.prompt();
+    // التعامل مع النتيجة
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      deferredPrompt = null;
+    });
+  });
+});
+
         let cart = [];
         let cartCount = 0;
         const cartSidebar = document.getElementById('cart-sidebar');
